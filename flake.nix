@@ -5,6 +5,7 @@
 
     outputs = {self, nixpkgs}:
         let pkgs = nixpkgs.legacyPackages.x86_64-linux;
+            ppkgs = pkgs.perlPackages;
         in {
             defaultPackage.x86_64-linux = pkgs.hello;
 
@@ -15,6 +16,9 @@
                     pkgs.maven
                     pkgs.yq
                     pkgs.hello
+                    pkgs.perl
+                    ppkgs.ArchiveExtract
+                    ppkgs.ArchiveZip
                 ]; };
         };
 }
