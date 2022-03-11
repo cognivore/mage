@@ -11,7 +11,7 @@
 
             devShell.x86_64-linux =
                 pkgs.mkShell { buildInputs = [
-                    pkgs.openjdk11_headless
+                    pkgs.openjdk11
                     pkgs.jre
                     pkgs.maven
                     pkgs.yq
