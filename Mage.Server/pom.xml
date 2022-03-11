@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -269,6 +268,25 @@
             <groupId>org.unbescape</groupId>
             <artifactId>unbescape</artifactId>
         </dependency>
+
+        <!-- Attempting a drop-in one last time -->
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-core</artifactId>
+            <version>3.0.2</version> <!-- must be at compile scope, not runtime like it currently is -->
+        </dependency>
+        <!-- End of attempting a drop-in one last time -->
+
     </dependencies>
 
     <build>
@@ -351,6 +369,6 @@
         <finalName>mage-server</finalName>
     </build>
 
-    <properties/>
+    <properties />
 
 </project>
