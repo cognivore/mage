@@ -103,11 +103,22 @@ public class ConnectionTest {
         }
     }
 
-    private final String randomHost = RandomStringUtils.randomAlphabetic(15);
-
     @Nested
     @DisplayName("getUri when host is not localhost should")
     class StandardHostTest extends TestsTemplate {
+        /*
+         * //// Reason for this change:
+         * [ERROR] mage.remote.ConnectionTest$StandardHostTest.port Time elapsed: 0.001
+         * s <<< ERROR!
+         * java.lang.Error:
+         * Unresolved compilation problem:
+         * Cannot refer to 'this' nor 'super' while explicitly invoking a constructor
+         *
+         * at
+         * mage.remote.ConnectionTest$StandardHostTest.<init>(ConnectionTest.java:112)
+         */
+        final public static String randomHost = "add.random.testing";
+
         StandardHostTest() {
             super(baseBuilder().with(c -> c.host = randomHost));
         }

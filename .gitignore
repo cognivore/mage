@@ -152,3 +152,7 @@ build-output.log
 
 # Visual Studio Code
 .history
+
+# Direnv
+
+.direnv/
