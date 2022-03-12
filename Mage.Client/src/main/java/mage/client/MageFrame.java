@@ -101,7 +101,6 @@ public class MageFrame extends javax.swing.JFrame implements MageClient {
     private static MageFrame instance;
 
     private final ConnectDialog connectDialog;
-    private WhatsNewDialog whatsNewDialog; // can be null
     private final ErrorDialog errorDialog;
     private static CallbackClient callbackClient;
     private static final Preferences PREFS = Preferences.userNodeForPackage(MageFrame.class);
@@ -111,7 +110,7 @@ public class MageFrame extends javax.swing.JFrame implements MageClient {
     private Connection currentConnection;
     private static MagePane activeFrame;
     private static boolean liteMode = false;
-    //TODO: make gray theme, implement theme selector in preferences dialog
+    // TODO: make gray theme, implement theme selector in preferences dialog
     private static boolean grayMode = false;
     private static boolean fullscreenMode = false;
     private static boolean skipSmallSymbolGenerationForExisting = false;
@@ -200,7 +199,8 @@ public class MageFrame extends javax.swing.JFrame implements MageClient {
             }
         });
 
-        Toolkit.getDefaultToolkit().addAWTEventListener(event -> handleEvent(event), AWTEvent.KEY_EVENT_MASK | AWTEvent.MOUSE_EVENT_MASK);
+        Toolkit.getDefaultToolkit().addAWTEventListener(event -> handleEvent(event),
+                AWTEvent.KEY_EVENT_MASK | AWTEvent.MOUSE_EVENT_MASK);
 
         TConfig config = TConfig.current();
         config.setArchiveDetector(new TArchiveDetector("zip"));
@@ -210,13 +210,19 @@ public class MageFrame extends javax.swing.JFrame implements MageClient {
             UIManager.put("desktop", new Color(0, 0, 0, 0));
             UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
 
-            UIManager.put("nimbusBlueGrey", PreferencesDialog.getCurrentTheme().getNimbusBlueGrey()); // buttons, scrollbar background, disabled inputs
+            UIManager.put("nimbusBlueGrey", PreferencesDialog.getCurrentTheme().getNimbusBlueGrey()); // buttons,
+                                                                                                      // scrollbar
+                                                                                                      // background,
+                                                                                                      // disabled inputs
             UIManager.put("control", PreferencesDialog.getCurrentTheme().getControl()); // window bg
-            UIManager.put("nimbusLightBackground", PreferencesDialog.getCurrentTheme().getNimbusLightBackground()); // inputs, table rows
+            UIManager.put("nimbusLightBackground", PreferencesDialog.getCurrentTheme().getNimbusLightBackground()); // inputs,
+                                                                                                                    // table
+                                                                                                                    // rows
             UIManager.put("info", PreferencesDialog.getCurrentTheme().getInfo()); // tooltips
-            UIManager.put("nimbusBase", PreferencesDialog.getCurrentTheme().getNimbusBase()); // title bars, scrollbar foreground
+            UIManager.put("nimbusBase", PreferencesDialog.getCurrentTheme().getNimbusBase()); // title bars, scrollbar
+                                                                                              // foreground
 
-            //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             // stop JSplitPane from eating F6 and F8 or any other function keys
             {
                 Object value = UIManager.get("SplitPane.ancestorInputMap");
@@ -270,21 +276,14 @@ public class MageFrame extends javax.swing.JFrame implements MageClient {
         SessionHandler.startSession(this);
         callbackClient = new CallbackClientImpl(this);
         connectDialog = new ConnectDialog();
-        try {
-            whatsNewDialog = new WhatsNewDialog();
-        } catch (NoClassDefFoundError e) {
-            // JavaFX is not supported on old MacOS with OpenJDK
-            // https://bugs.openjdk.java.net/browse/JDK-8202132
-            LOGGER.error("JavaFX is not supported by your system. What's new page will be disabled.", e);
-            whatsNewDialog = null;
-        }
         desktopPane.add(connectDialog, JLayeredPane.MODAL_LAYER);
         errorDialog = new ErrorDialog();
         errorDialog.setLocation(100, 100);
         desktopPane.add(errorDialog, JLayeredPane.MODAL_LAYER);
         UI.addComponent(MageComponents.DESKTOP_PANE, desktopPane);
 
-        PING_TASK_EXECUTOR.scheduleAtFixedRate(() -> SessionHandler.ping(), TablesPanel.PING_SERVER_SECS, TablesPanel.PING_SERVER_SECS, TimeUnit.SECONDS);
+        PING_TASK_EXECUTOR.scheduleAtFixedRate(() -> SessionHandler.ping(), TablesPanel.PING_SERVER_SECS,
+                TablesPanel.PING_SERVER_SECS, TimeUnit.SECONDS);
 
         updateMemUsageTask = new UpdateMemUsageTask(jMemUsageLabel);
 
@@ -314,12 +313,15 @@ public class MageFrame extends javax.swing.JFrame implements MageClient {
                 ArrowBuilder.getBuilder().setSize(width, height);
 
                 if (title != null) {
-                    title.setBounds((int) (width - titleRectangle.getWidth()) / 2, (int) (height - titleRectangle.getHeight()) / 2, titleRectangle.width, titleRectangle.height);
+                    title.setBounds((int) (width - titleRectangle.getWidth()) / 2,
+                            (int) (height - titleRectangle.getHeight()) / 2, titleRectangle.width,
+                            titleRectangle.height);
                 }
             }
         });
 
-        // balloonTip = new BalloonTip(desktopPane, "", new ModernBalloonStyle(0, 0, Color.WHITE, Color.YELLOW, Color.BLUE), false);
+        // balloonTip = new BalloonTip(desktopPane, "", new ModernBalloonStyle(0, 0,
+        // Color.WHITE, Color.YELLOW, Color.BLUE), false);
         balloonTip = new BalloonTip(desktopPane, "", new EdgedBalloonStyle(Color.WHITE, Color.BLUE), false);
         balloonTip.setPositioner(new LeftAbovePositioner(0, 0));
         balloonTip.setVisible(false);
@@ -369,7 +371,9 @@ public class MageFrame extends javax.swing.JFrame implements MageClient {
     private void setWindowTitle() {
         setTitle(TITLE_NAME + "  Client: "
                 + (VERSION == null ? "<not available>" : VERSION.toString()) + "  Server: "
-                + ((SessionHandler.getSession() != null && SessionHandler.isConnected()) ? SessionHandler.getVersionInfo() : NOT_CONNECTED_TEXT));
+                + ((SessionHandler.getSession() != null && SessionHandler.isConnected())
+                        ? SessionHandler.getVersionInfo()
+                        : NOT_CONNECTED_TEXT));
     }
 
     private void updateTooltipContainerSizes() {
@@ -413,7 +417,6 @@ public class MageFrame extends javax.swing.JFrame implements MageClient {
         desktopPane.add(popupContainer, JLayeredPane.POPUP_LAYER);
         UI.addComponent(MageComponents.POPUP_CONTAINER, popupContainer);
 
-
         JPanel cardPreviewContainer = new JPanel();
         cardPreviewContainer.setOpaque(false);
         cardPreviewContainer.setLayout(null);
@@ -433,7 +436,6 @@ public class MageFrame extends javax.swing.JFrame implements MageClient {
         cardPreviewContainerRotated.setVisible(false);
         desktopPane.add(cardPreviewContainerRotated, JLayeredPane.POPUP_LAYER);
         UI.addComponent(MageComponents.CARD_PREVIEW_CONTAINER_ROTATED, cardPreviewContainerRotated);
-
 
         BigCard bigCardRotated = new BigCard(true);
         bigCardRotated.setLocation(40, 40);
@@ -455,7 +457,8 @@ public class MageFrame extends javax.swing.JFrame implements MageClient {
             BigCard bigCard = (BigCard) UI.getComponent(MageComponents.CARD_PREVIEW_PANE);
             bigCard.setSize(width, height);
 
-            JPanel cardPreviewContainerRotated = (JPanel) UI.getComponent(MageComponents.CARD_PREVIEW_CONTAINER_ROTATED);
+            JPanel cardPreviewContainerRotated = (JPanel) UI
+                    .getComponent(MageComponents.CARD_PREVIEW_CONTAINER_ROTATED);
             cardPreviewContainerRotated.setBounds(0, 0, height + 80, width + 100 + 30);
 
             BigCard bigCardRotated = (BigCard) UI.getComponent(MageComponents.CARD_PREVIEW_PANE_ROTATED);
@@ -475,10 +478,12 @@ public class MageFrame extends javax.swing.JFrame implements MageClient {
         try {
             // If user has custom background, use that, otherwise, use theme background
             if (Plugins.instance.isThemePluginLoaded() &&
-                    !PreferencesDialog.getCachedValue(PreferencesDialog.KEY_BACKGROUND_IMAGE_DEFAULT, "true").equals("true")) {
+                    !PreferencesDialog.getCachedValue(PreferencesDialog.KEY_BACKGROUND_IMAGE_DEFAULT, "true")
+                            .equals("true")) {
                 backgroundPane = (ImagePanel) Plugins.instance.updateTablePanel(new HashMap<>());
             } else {
-                InputStream is = this.getClass().getResourceAsStream(PreferencesDialog.getCurrentTheme().getLoginBackgroundPath());
+                InputStream is = this.getClass()
+                        .getResourceAsStream(PreferencesDialog.getCurrentTheme().getLoginBackgroundPath());
                 BufferedImage background = ImageIO.read(is);
                 backgroundPane = new ImagePanel(background, ImagePanelStyle.SCALED);
             }
@@ -530,7 +535,9 @@ public class MageFrame extends javax.swing.JFrame implements MageClient {
                 titleRectangle = new Rectangle(540, (int) (640 / ratio));
 
                 BufferedImage image = ImageIO.read(is);
-                //ImageIcon resized = new ImageIcon(image.getScaledInstance(titleRectangle.width, titleRectangle.height, java.awt.Image.SCALE_SMOOTH));
+                // ImageIcon resized = new
+                // ImageIcon(image.getScaledInstance(titleRectangle.width,
+                // titleRectangle.height, java.awt.Image.SCALE_SMOOTH));
                 title = new JLabel();
                 title.setIcon(new ImageIcon(image));
                 backgroundPane.setLayout(null);
@@ -574,7 +581,7 @@ public class MageFrame extends javax.swing.JFrame implements MageClient {
                         MagePane frame = ((MagePaneMenuItem) ae.getSource()).getFrame();
                         setActive(frame);
                     });
-                    //menuItem.setIcon(window.getFrameIcon());
+                    // menuItem.setIcon(window.getFrameIcon());
                     menu.add(menuItem);
                 }
             }
@@ -600,7 +607,8 @@ public class MageFrame extends javax.swing.JFrame implements MageClient {
     }
 
     public static void setActive(MagePane frame) {
-        // Always hide not hidden popup window or enlarged card view if a frame is set to active
+        // Always hide not hidden popup window or enlarged card view if a frame is set
+        // to active
         try {
             ActionCallback callback = Plugins.instance.getActionCallback();
             if (callback instanceof MageActionCallback) {
@@ -675,7 +683,8 @@ public class MageFrame extends javax.swing.JFrame implements MageClient {
             if (frame.isVisible()) {
                 int z = desktopPane.getComponentZOrder(frame);
                 if (z < best) {
-                    // Exclude the tables pane if not connected, we never want to show it when not connected
+                    // Exclude the tables pane if not connected, we never want to show it when not
+                    // connected
                     if (frame instanceof MagePane && (SessionHandler.isConnected() || !(frame instanceof TablesPane))) {
                         best = z;
                         if (!frame.equals(exclude)) {
@@ -808,14 +817,16 @@ public class MageFrame extends javax.swing.JFrame implements MageClient {
             currentConnection.setHost(server);
             currentConnection.setPort(port);
             // force to redownload db on updates
-            boolean redownloadDatabase = (ExpansionRepository.instance.getSetByCode("GRN") == null || CardRepository.instance.findCard("Island") == null);
+            boolean redownloadDatabase = (ExpansionRepository.instance.getSetByCode("GRN") == null
+                    || CardRepository.instance.findCard("Island") == null);
             currentConnection.setForceDBComparison(redownloadDatabase);
             String allMAC = "";
             try {
                 allMAC = Connection.getMAC();
             } catch (SocketException ex) {
             }
-            currentConnection.setUserIdStr(System.getProperty("user.name") + ":" + System.getProperty("os.name") + ":" + MagePreferences.getUserNames() + ":" + allMAC);
+            currentConnection.setUserIdStr(System.getProperty("user.name") + ":" + System.getProperty("os.name") + ":"
+                    + MagePreferences.getUserNames() + ":" + allMAC);
             currentConnection.setProxyType(proxyType);
             currentConnection.setProxyHost(proxyServer);
             currentConnection.setProxyPort(proxyPort);
@@ -826,7 +837,8 @@ public class MageFrame extends javax.swing.JFrame implements MageClient {
 
         try {
             LOGGER.debug("connecting (auto): " + currentConnection.getProxyType().toString()
-                    + ' ' + currentConnection.getProxyHost() + ' ' + currentConnection.getProxyPort() + ' ' + currentConnection.getProxyUsername());
+                    + ' ' + currentConnection.getProxyHost() + ' ' + currentConnection.getProxyPort() + ' '
+                    + currentConnection.getProxyUsername());
             if (MageFrame.connect(currentConnection)) {
                 prepareAndShowTablesPane();
                 return true;
@@ -849,7 +861,8 @@ public class MageFrame extends javax.swing.JFrame implements MageClient {
      * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         popupDebug = new javax.swing.JPopupMenu();
@@ -907,7 +920,8 @@ public class MageFrame extends javax.swing.JFrame implements MageClient {
 
         btnPreferences.setIcon(new javax.swing.ImageIcon(getClass().getResource("/menu/preferences.png"))); // NOI18N
         btnPreferences.setText("Preferences");
-        btnPreferences.setToolTipText("By changing the settings in the preferences window you can adjust the look and behaviour of xmage.");
+        btnPreferences.setToolTipText(
+                "By changing the settings in the preferences window you can adjust the look and behaviour of xmage.");
         btnPreferences.setFocusable(false);
         btnPreferences.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         btnPreferences.addActionListener(new java.awt.event.ActionListener() {
@@ -971,7 +985,8 @@ public class MageFrame extends javax.swing.JFrame implements MageClient {
 
         btnSymbols.setIcon(new javax.swing.ImageIcon(getClass().getResource("/menu/symbol.png"))); // NOI18N
         btnSymbols.setText("Symbols");
-        btnSymbols.setToolTipText("<HTML>Load the mana and other card symbols from the internet.<br>\nOtherwise you only see the replacement sequence like {U} for blue mana symbol.<br>\nYou need to do that only once.");
+        btnSymbols.setToolTipText(
+                "<HTML>Load the mana and other card symbols from the internet.<br>\nOtherwise you only see the replacement sequence like {U} for blue mana symbol.<br>\nYou need to do that only once.");
         btnSymbols.setFocusable(false);
         btnSymbols.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         btnSymbols.addActionListener(new java.awt.event.ActionListener() {
@@ -1034,15 +1049,16 @@ public class MageFrame extends javax.swing.JFrame implements MageClient {
         layout.setHorizontalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(desktopPane, javax.swing.GroupLayout.DEFAULT_SIZE, 838, Short.MAX_VALUE)
-                        .addComponent(mageToolbar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+                        .addComponent(mageToolbar, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
         layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
-                                .addComponent(mageToolbar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(mageToolbar, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(2, 2, 2)
-                                .addComponent(desktopPane, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE))
-        );
+                                .addComponent(desktopPane, javax.swing.GroupLayout.DEFAULT_SIZE, 145,
+                                        Short.MAX_VALUE)));
 
         if (PreferencesDialog.getCurrentTheme().getMageToolbar() != null) {
             mageToolbar.getParent().setBackground(PreferencesDialog.getCurrentTheme().getMageToolbar());
@@ -1051,13 +1067,14 @@ public class MageFrame extends javax.swing.JFrame implements MageClient {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnDeckEditorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeckEditorActionPerformed
+    private void btnDeckEditorActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnDeckEditorActionPerformed
         showDeckEditor(DeckEditorMode.FREE_BUILDING, null, null, 0);
-    }//GEN-LAST:event_btnDeckEditorActionPerformed
+    }// GEN-LAST:event_btnDeckEditorActionPerformed
 
-    private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
+    private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnConnectActionPerformed
         if (SessionHandler.isConnected()) {
-            UserRequestMessage message = new UserRequestMessage("Confirm disconnect", "Are you sure you want to disconnect?");
+            UserRequestMessage message = new UserRequestMessage("Confirm disconnect",
+                    "Are you sure you want to disconnect?");
             message.setButton1("No", null);
             message.setButton2("Yes", PlayerAction.CLIENT_DISCONNECT);
             showUserRequestDialog(message);
@@ -1065,9 +1082,9 @@ public class MageFrame extends javax.swing.JFrame implements MageClient {
             connectDialog.showDialog();
             setWindowTitle();
         }
-    }//GEN-LAST:event_btnConnectActionPerformed
+    }// GEN-LAST:event_btnConnectActionPerformed
 
-    public void btnAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAboutActionPerformed
+    public void btnAboutActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnAboutActionPerformed
         JInternalFrame[] windows = desktopPane.getAllFramesInLayer(JLayeredPane.MODAL_LAYER);
         for (JInternalFrame window : windows) {
             if (window instanceof AboutDialog) {
@@ -1078,52 +1095,54 @@ public class MageFrame extends javax.swing.JFrame implements MageClient {
         AboutDialog aboutDialog = new AboutDialog();
         desktopPane.add(aboutDialog, JLayeredPane.MODAL_LAYER);
         aboutDialog.showDialog(VERSION);
-    }//GEN-LAST:event_btnAboutActionPerformed
+    }// GEN-LAST:event_btnAboutActionPerformed
 
-    private void btnCollectionViewerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCollectionViewerActionPerformed
+    private void btnCollectionViewerActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnCollectionViewerActionPerformed
         showCollectionViewer();
-    }//GEN-LAST:event_btnCollectionViewerActionPerformed
+    }// GEN-LAST:event_btnCollectionViewerActionPerformed
 
-    public void btnPreferencesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPreferencesActionPerformed
-        PreferencesDialog.main(new String[]{});
-    }//GEN-LAST:event_btnPreferencesActionPerformed
+    public void btnPreferencesActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnPreferencesActionPerformed
+        PreferencesDialog.main(new String[] {});
+    }// GEN-LAST:event_btnPreferencesActionPerformed
 
-    public void btnSendFeedbackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSendFeedbackActionPerformed
+    public void btnSendFeedbackActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnSendFeedbackActionPerformed
         if (!SessionHandler.isConnected()) {
-            JOptionPane.showMessageDialog(null, "You may send us feedback only when connected to server.", "Information", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "You may send us feedback only when connected to server.",
+                    "Information", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        FeedbackDialog.main(new String[]{});
-    }//GEN-LAST:event_btnSendFeedbackActionPerformed
+        FeedbackDialog.main(new String[] {});
+    }// GEN-LAST:event_btnSendFeedbackActionPerformed
 
-    private void btnSymbolsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSymbolsActionPerformed
+    private void btnSymbolsActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnSymbolsActionPerformed
         downloadAdditionalResources();
-    }//GEN-LAST:event_btnSymbolsActionPerformed
+    }// GEN-LAST:event_btnSymbolsActionPerformed
 
     public void downloadAdditionalResources() {
-        UserRequestMessage message = new UserRequestMessage("Download additional resources", "Do you want to download game symbols and additional image files?");
+        UserRequestMessage message = new UserRequestMessage("Download additional resources",
+                "Do you want to download game symbols and additional image files?");
         message.setButton1("No", null);
         message.setButton2("Yes", PlayerAction.CLIENT_DOWNLOAD_SYMBOLS);
         showUserRequestDialog(message);
     }
 
-    private void btnImagesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImagesActionPerformed
+    private void btnImagesActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnImagesActionPerformed
         downloadImages();
-    }//GEN-LAST:event_btnImagesActionPerformed
+    }// GEN-LAST:event_btnImagesActionPerformed
 
-    private void menuDebugTestModalDialogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuDebugTestModalDialogActionPerformed
+    private void menuDebugTestModalDialogActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_menuDebugTestModalDialogActionPerformed
         final TestModalDialog dialog = new TestModalDialog();
         dialog.showDialog();
-    }//GEN-LAST:event_menuDebugTestModalDialogActionPerformed
+    }// GEN-LAST:event_menuDebugTestModalDialogActionPerformed
 
-    private void btnDebugMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDebugMouseClicked
+    private void btnDebugMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_btnDebugMouseClicked
         popupDebug.show(evt.getComponent(), 0, evt.getComponent().getHeight());
-    }//GEN-LAST:event_btnDebugMouseClicked
+    }// GEN-LAST:event_btnDebugMouseClicked
 
-    private void menuDebugTestCardRenderModesDialogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuDebugTestCardRenderModesDialogActionPerformed
+    private void menuDebugTestCardRenderModesDialogActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_menuDebugTestCardRenderModesDialogActionPerformed
         final TestCardRenderDialog dialog = new TestCardRenderDialog();
         dialog.showDialog();
-    }//GEN-LAST:event_menuDebugTestCardRenderModesDialogActionPerformed
+    }// GEN-LAST:event_menuDebugTestCardRenderModesDialogActionPerformed
 
     public void downloadImages() {
         DownloadPicturesService.startDownload();
@@ -1131,7 +1150,8 @@ public class MageFrame extends javax.swing.JFrame implements MageClient {
 
     public void exitApp() {
         if (SessionHandler.isConnected()) {
-            UserRequestMessage message = new UserRequestMessage("Confirm disconnect", "You are currently connected.  Are you sure you want to disconnect?");
+            UserRequestMessage message = new UserRequestMessage("Confirm disconnect",
+                    "You are currently connected.  Are you sure you want to disconnect?");
             message.setButton1("No", null);
             message.setButton2("Yes", PlayerAction.CLIENT_EXIT);
             MageFrame.getInstance().showUserRequestDialog(message);
@@ -1205,7 +1225,8 @@ public class MageFrame extends javax.swing.JFrame implements MageClient {
 
     public void showDeckEditor(DeckEditorMode mode, Deck deck, UUID tableId, int time) {
         String name;
-        if (mode == DeckEditorMode.SIDEBOARDING || mode == DeckEditorMode.LIMITED_BUILDING || mode == DeckEditorMode.VIEW_LIMITED_DECK) {
+        if (mode == DeckEditorMode.SIDEBOARDING || mode == DeckEditorMode.LIMITED_BUILDING
+                || mode == DeckEditorMode.VIEW_LIMITED_DECK) {
             name = "Deck Editor - " + tableId.toString();
         } else {
             if (deck != null) {
@@ -1352,7 +1373,8 @@ public class MageFrame extends javax.swing.JFrame implements MageClient {
                 if (startPort > 0) {
                     instance.currentConnection.setPort(startPort);
                 } else {
-                    instance.currentConnection.setPort(MagePreferences.getServerPortWithDefault(ClientDefaultSettings.port));
+                    instance.currentConnection
+                            .setPort(MagePreferences.getServerPortWithDefault(ClientDefaultSettings.port));
                 }
                 PreferencesDialog.setProxyInformation(instance.currentConnection);
                 instance.currentConnection.setPassword(startPassword);
@@ -1471,7 +1493,8 @@ public class MageFrame extends javax.swing.JFrame implements MageClient {
 
     @Override
     public void disconnected(final boolean askToReconnect) {
-        if (SwingUtilities.isEventDispatchThread()) { // Returns true if the current thread is an AWT event dispatching thread.
+        if (SwingUtilities.isEventDispatchThread()) { // Returns true if the current thread is an AWT event dispatching
+                                                      // thread.
             // REMOTE task, e.g. connecting
             LOGGER.info("Disconnected from remote task");
             setConnectButtonText(NOT_CONNECTED_BUTTON);
@@ -1482,19 +1505,21 @@ public class MageFrame extends javax.swing.JFrame implements MageClient {
             // USER mode, e.g. user plays and got disconnect
             LOGGER.info("Disconnected from user mode");
             SwingUtilities.invokeLater(() -> {
-                        SessionHandler.disconnect(false); // user already disconnected, can't do any online actions like quite chat
-                        setConnectButtonText(NOT_CONNECTED_BUTTON);
-                        disableButtons();
-                        hideGames();
-                        hideTables();
-                        if (askToReconnect) {
-                            UserRequestMessage message = new UserRequestMessage("Connection lost", "The connection to server was lost. Reconnect to " + MagePreferences.getLastServerAddress() + "?");
-                            message.setButton1("No", null);
-                            message.setButton2("Yes", PlayerAction.CLIENT_RECONNECT);
-                            showUserRequestDialog(message);
-                        }
-                    }
-            );
+                SessionHandler.disconnect(false); // user already disconnected, can't do any online actions like quite
+                                                  // chat
+                setConnectButtonText(NOT_CONNECTED_BUTTON);
+                disableButtons();
+                hideGames();
+                hideTables();
+                if (askToReconnect) {
+                    UserRequestMessage message = new UserRequestMessage("Connection lost",
+                            "The connection to server was lost. Reconnect to " + MagePreferences.getLastServerAddress()
+                                    + "?");
+                    message.setButton1("No", null);
+                    message.setButton2("Yes", PlayerAction.CLIENT_RECONNECT);
+                    showUserRequestDialog(message);
+                }
+            });
         }
     }
 
@@ -1577,7 +1602,8 @@ public class MageFrame extends javax.swing.JFrame implements MageClient {
                 break;
             default:
                 if (SessionHandler.getSession() != null && playerAction != null) {
-                    SessionHandler.sendPlayerAction(playerAction, userRequestMessage.getGameId(), userRequestMessage.getRelatedUserId());
+                    SessionHandler.sendPlayerAction(playerAction, userRequestMessage.getGameId(),
+                            userRequestMessage.getRelatedUserId());
                 }
 
         }
@@ -1656,9 +1682,6 @@ public class MageFrame extends javax.swing.JFrame implements MageClient {
     }
 
     public void showWhatsNewDialog(boolean forceToShowPage) {
-        if (whatsNewDialog != null) {
-            whatsNewDialog.checkUpdatesAndShow(forceToShowPage);
-        }
     }
 
     public boolean isGameFrameActive(UUID gameId) {

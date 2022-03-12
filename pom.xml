@@ -202,34 +202,6 @@
             <version>3.21.0</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- JFX stuff to display changelogs (I think it's a Mage.Client-only dependency, but it doesn't matter for now) -->
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-controls</artifactId>
-            <version>11.0.2</version>
-            <type>pom</type>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-fxml</artifactId>
-            <version>11.0.2</version>
-            <type>pom</type>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-web</artifactId>
-            <version>11.0.2</version>
-            <type>pom</type>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-swing</artifactId>
-            <version>11.0.2</version>
-            <type>pom</type>
-        </dependency>
-        <!-- End of JFX stuff -->
-
     </dependencies>
 
     <dependencyManagement>
